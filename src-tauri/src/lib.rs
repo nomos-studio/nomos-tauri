@@ -1,6 +1,8 @@
 use std::sync::atomic::{AtomicU64, Ordering};
+use std::time::Duration;
 use tauri::Manager;
 use tokio::sync::mpsc;
+use tokio::time;
 use tokio_tungstenite::connect_async;
 use tokio_tungstenite::tungstenite::Message;
 use futures_util::{SinkExt, StreamExt};
@@ -43,17 +45,39 @@ async fn run_keyboard_ws(mut rx: mpsc::UnboundedReceiver<String>) {
         return;
     }
 
-    // Drain incoming frames on a background task (heartbeat replies etc.).
-    // TODO: send Phoenix heartbeat every 30s to keep the connection alive.
+    // Drain incoming frames (Phoenix heartbeat replies, phx_reply acks, etc.).
     tauri::async_runtime::spawn(async move {
         while let Some(Ok(_)) = read.next().await {}
     });
 
-    // Forward key events from the command handler to the WebSocket.
-    while let Some(msg) = rx.recv().await {
-        if write.send(Message::Text(msg.into())).await.is_err() {
-            eprintln!("[nomos-tauri] keyboard ws: send error — connection lost");
-            break;
+    // Send/heartbeat loop: races key events against a 30s heartbeat timer.
+    // Phoenix drops connections that haven't received a client heartbeat within
+    // the server-side timeout (default 60s); 30s gives us a 2× safety margin.
+    let mut hb_seq: u64 = 0;
+    let mut heartbeat = time::interval(Duration::from_secs(30));
+    heartbeat.tick().await; // consume the immediate first tick
+
+    loop {
+        tokio::select! {
+            msg = rx.recv() => {
+                match msg {
+                    Some(msg) => {
+                        if write.send(Message::Text(msg.into())).await.is_err() {
+                            eprintln!("[nomos-tauri] keyboard ws: send error — connection lost");
+                            break;
+                        }
+                    }
+                    None => break, // sender dropped; Tauri is shutting down
+                }
+            }
+            _ = heartbeat.tick() => {
+                hb_seq += 1;
+                let hb = format!(r#"[null,"{hb_seq}","phoenix","heartbeat",{{}}]"#);
+                if write.send(Message::Text(hb.into())).await.is_err() {
+                    eprintln!("[nomos-tauri] keyboard ws: heartbeat send error");
+                    break;
+                }
+            }
         }
     }
 }
