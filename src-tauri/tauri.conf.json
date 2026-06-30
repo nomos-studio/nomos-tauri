@@ -1,0 +1,22 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "nomos-studio",
+  "version": "0.1.0",
+  "identifier": "studio.nomos",
+  "build": {
+    "beforeDevCommand": "",
+    "devUrl": "http://localhost:4000",
+    "beforeBuildCommand": ""
+  },
+  "app": {
+    "windows": [],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": []
+  }
+}
