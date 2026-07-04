@@ -1,0 +1,19 @@
+version = 1
+SPDX-PackageName = "nomos-tauri"
+SPDX-PackageSupplier = "rodgert@twrodgers.com"
+SPDX-PackageDownloadLocation = "https://github.com/nomos-studio/nomos-tauri"
+
+[[annotations]]
+path = ["src-tauri/src/**", "src-tauri/build.rs"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2025-2026 nomos-studio contributors"
+SPDX-License-Identifier = "EPL-2.0"
+
+# Generated schemas, icons, and Cargo manifests
+[[annotations]]
+path = ["src-tauri/gen/**", "src-tauri/icons/**", "src-tauri/Cargo.toml",
+        "src-tauri/Cargo.lock", "src-tauri/tauri.conf.json",
+        "src-tauri/capabilities/**", ".gitignore"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2025-2026 nomos-studio contributors"
+SPDX-License-Identifier = "EPL-2.0"
