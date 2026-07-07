@@ -17,3 +17,10 @@ path = ["src-tauri/gen/**", "src-tauri/icons/**", "src-tauri/Cargo.toml",
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2025-2026 nomos-studio contributors"
 SPDX-License-Identifier = "EPL-2.0"
+
+# CI workflows
+[[annotations]]
+path = [".github/**"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2025-2026 nomos-studio contributors"
+SPDX-License-Identifier = "EPL-2.0"
