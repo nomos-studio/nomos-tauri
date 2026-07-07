@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: EPL-2.0
+# SPDX-FileCopyrightText: 2025-2026 nomos-studio contributors
 version = 1
 SPDX-PackageName = "nomos-tauri"
 SPDX-PackageSupplier = "rodgert@twrodgers.com"
