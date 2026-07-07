@@ -1,0 +1,17 @@
+# SPDX-License-Identifier: EPL-2.0
+# SPDX-FileCopyrightText: 2026 nomos-studio contributors
+#
+# nomos-tauri CI — REUSE compliance check
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+jobs:
+  lint-reuse:
+    name: REUSE compliance
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: fsfe/reuse-action@v4
